@@ -39,7 +39,7 @@ export function TopicsPage() {
   const attempted = summary?.attempted_questions ?? 0
   const startError =
     start.error instanceof ApiError && start.error.message === 'no questions found'
-      ? 'This topic has no questions yet.'
+      ? 'Nothing left to review in this topic.'
       : start.error
         ? 'Couldn’t start the topic.'
         : null
@@ -48,7 +48,7 @@ export function TopicsPage() {
     <div>
       <h1 className="font-serif text-5xl leading-none font-medium tracking-tight">Topics</h1>
       <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--color-muted)]">
-        A short set of 10 questions. Answers are checked right away, with no timer.
+        Up to 10 questions, skipping ones you have already mastered. Answers are checked right away, with no timer.
       </p>
       {startError ? <p className="mt-4 text-sm text-[var(--color-bad)]">{startError}</p> : null}
 
