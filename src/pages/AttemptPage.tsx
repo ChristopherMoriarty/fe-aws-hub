@@ -57,8 +57,8 @@ function OpenAttempt({
     () => [...(attempt.questions ?? [])].sort((a, b) => a.position - b.position),
     [attempt.questions],
   )
-  const [index, setIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string[]>>(() => readAnswers(attempt.id))
+  const [answers, setAnswers] = useState<Record<string, string[]>>(() => initialAnswers(attempt))
+  const [index, setIndex] = useState(() => firstUnanswered(questions, initialAnswers(attempt)))
   const [checks, setChecks] = useState<Record<string, Check>>(() => readChecks(attempt.id))
   const [now, setNow] = useState(() => Date.now())
   const certifications = useCertifications()
@@ -390,6 +390,21 @@ function readChecks(attemptId: string) {
   } catch {
     return {}
   }
+}
+
+function initialAnswers(attempt: Attempt) {
+  const saved = readAnswers(attempt.id)
+  if (Object.keys(saved).length > 0) return saved
+  const seeded: Record<string, string[]> = {}
+  for (const question of attempt.questions ?? []) {
+    if (question.selected_option_ids?.length) seeded[question.id] = question.selected_option_ids
+  }
+  return seeded
+}
+
+function firstUnanswered(questions: AttemptQuestion[], answers: Record<string, string[]>) {
+  const index = questions.findIndex((question) => (answers[question.id]?.length ?? 0) === 0)
+  return index < 0 ? 0 : index
 }
 
 function readAnswers(attemptId: string) {
